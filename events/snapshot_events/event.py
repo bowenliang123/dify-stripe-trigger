@@ -17,8 +17,6 @@ class StripeSnapshotEvents(Event):
         stripe_event: dict[str, Any] = payload.get("stripe_event")
         if not stripe_event:
             raise EventIgnoreError("stripe_event is empty")
-        print(f"stripe_event: {stripe_event}")
-        print(f"stripe_event type: {type(stripe_event)}")
 
         request_json = request.get_json(silent=True) or {}
         return Variables(variables={**request_json})
