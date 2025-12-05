@@ -1,0 +1,43 @@
+identity:
+  name: "stripe_trigger_event"
+  author: "bowenliang123"
+  label:
+    en_US: "StripeTrigger Event"
+    zh_Hans: "stripe_trigger 事件"
+    pt_BR: "Evento StripeTrigger"
+    ja_JP: "stripe_trigger イベント"
+
+description:
+  en_US: "Stripe Webhook Trigger for Dify"
+  zh_Hans: "Stripe Webhook Trigger for Dify"
+  pt_BR: "Stripe Webhook Trigger for Dify"
+  ja_JP: "Stripe Webhook Trigger for Dify"
+
+parameters:
+  - name: "sample_filter"
+    type: "string"
+    required: false
+    label:
+      en_US: "Sample Filter"
+      zh_Hans: "示例过滤器"
+      pt_BR: "Filtro de Exemplo"
+      ja_JP: "サンプルフィルター"
+    help:
+      en_US: "Optionally filter events before executing the trigger."
+      zh_Hans: "在执行触发器之前可选地过滤事件。"
+      pt_BR: "Opcionalmente filtre eventos antes de executar o gatilho."
+      ja_JP: "トリガーを実行する前にイベントをフィルタリングします (任意)。"
+
+output_schema:
+  type: object
+  properties:
+    message:
+      type: string
+      description: "Sample message returned to downstream workflow nodes."
+    raw_event:
+      type: object
+      description: "Original payload returned by the third-party integration."
+
+extra:
+  python:
+    source: events/stripe_trigger_event.py
