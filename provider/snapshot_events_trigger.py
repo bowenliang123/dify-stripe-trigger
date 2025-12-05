@@ -17,7 +17,7 @@ from stripe import Event as StripeEvent
 from werkzeug import Request, Response
 
 
-class StripeTriggerTrigger(Trigger):
+class StripeSnapshotEventTrigger(Trigger):
     """
     Handle the webhook event dispatch.
     """

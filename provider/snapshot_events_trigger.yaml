@@ -1,0 +1,112 @@
+identity:
+  name: "stripe_snapshot_events_trigger"
+  author: "bowenliang123"
+  label:
+    en_US: "Stripe Snapshot Events Trigger"
+    zh_Hans: "Stripe Snapshot Events Trigger"
+  description:
+    en_US: "Stripe Snapshot Event Trigger for Dify"
+    zh_Hans: "Stripe Snapshot 事件触发器"
+  icon: "icon.svg"
+
+
+subscription_schema:
+  - name: "endpoint_secret"
+    type: "secret-input"
+    required: false
+    label:
+      en_US: "Webhook Secret"
+      zh_Hans: "Webhook 密钥"
+    help:
+      en_US: "Optional shared secret used to validate inbound webhook signatures."
+      zh_Hans: "用于验证 Webhook 签名的可选共享密钥。"
+
+subscription_constructor:
+  parameters:
+  - name: "events"
+    type: "checkbox"
+    multiple: true
+    required: true
+    default: ["stripe_trigger_event"]
+    options:
+      - value: "stripe_trigger_event"
+        label:
+          en_US: "StripeTrigger Event"
+          zh_Hans: "stripe_trigger 事件"
+    label:
+      en_US: "Events to Subscribe"
+      zh_Hans: "订阅的事件"
+    help:
+      en_US: "Select which trigger events should be delivered to this subscription."
+      zh_Hans: "选择哪些触发事件应该推送到这个订阅。"
+
+  credentials_schema:
+    api_key:
+      type: "secret-input"
+      required: false
+      label:
+        en_US: "API Key"
+        zh_Hans: "API 密钥"
+      placeholder:
+        en_US: "Paste your service API key"
+        zh_Hans: "粘贴您的服务 API 密钥"
+      help:
+        en_US: "Used to authenticate requests to the third-party service."
+        zh_Hans: "用于向第三方服务发起请求时进行身份验证。"
+
+#########################################################################################
+# If you want to support OAuth, you can uncomment the following code.
+#########################################################################################
+  # oauth_schema:
+  #   client_schema:
+  #   - name: "client_id"
+  #     type: "secret-input"
+  #     required: true
+  #     label:
+  #       en_US: "Client ID"
+  #       zh_Hans: "Client ID"
+  #       ja_JP: "クライアントID"
+  #     placeholder:
+  #       en_US: "Enter the OAuth Client ID"
+  #       zh_Hans: "请输入 OAuth Client ID"
+  #       ja_JP: "OAuth クライアントIDを入力してください"
+  #     help:
+  #       en_US: "The OAuth Client ID."
+  #       zh_Hans: "在第三方获取 Client ID。"
+  #       ja_JP: "OAuth で取得したクライアントID。"
+  #   - name: "client_secret"
+  #     type: "secret-input"
+  #     required: true
+  #     label:
+  #       en_US: "Client Secret"
+  #       zh_Hans: "Client Secret"
+  #       ja_JP: "クライアントシークレット"
+  #     placeholder:
+  #       en_US: "Enter the OAuth Client Secret"
+  #       zh_Hans: "请输入 OAuth Client Secret"
+  #       ja_JP: "OAuth クライアントシークレットを入力してください"
+  #     help:
+  #       en_US: "The OAuth Client Secret generated together with the Client ID."
+  #       zh_Hans: "与 Client ID 一同生成的 OAuth Client Secret。"
+  #       ja_JP: "クライアントIDと併せて発行された OAuth クライアントシークレット。"
+  #   credentials_schema:
+  #   - name: "access_token"
+  #     type: "secret-input"
+  #     label:
+  #       en_US: "Access Token"
+  #       zh_Hans: "访问令牌"
+  #       ja_JP: "アクセストークン"
+  #   - name: "refresh_token"
+  #     type: "secret-input"
+  #     label:
+  #       en_US: "Refresh Token"
+  #       zh_Hans: "刷新令牌"
+  #       ja_JP: "リフレッシュトークン"
+
+
+events:
+  - events/snapshot_events/event.yaml
+
+extra:
+  python:
+    source: provider/snapshot_events_trigger.py

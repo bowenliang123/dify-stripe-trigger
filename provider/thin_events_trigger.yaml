@@ -1,12 +1,12 @@
 identity:
-  name: "stripe_trigger"
+  name: "stripe_thin_events_trigger"
   author: "bowenliang123"
   label:
-    en_US: "stripe_trigger"
-    zh_Hans: "stripe_trigger"
+    en_US: "Stripe Thin Events Trigger"
+    zh_Hans: "Stripe Thin Events Trigger"
   description:
-    en_US: "Stripe Webhook Trigger for Dify"
-    zh_Hans: "Stripe Webhook Trigger for Dify"
+    en_US: "Stripe Thin Event Trigger for Dify"
+    zh_Hans: "Stripe Thin 事件触发器"
   icon: "icon.svg"
 
 
@@ -105,8 +105,8 @@ subscription_constructor:
 
 
 events:
-  - events/snapshot_events/event.yaml
+  - events/thin_events/event.yaml
 
 extra:
   python:
-    source: provider/stripe_trigger.py
+    source: provider/thin_events_trigger.py

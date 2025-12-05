@@ -15,7 +15,8 @@ resource:
   permission: {}
 plugins:
   triggers:
-    - provider/stripe_trigger.yaml
+    - provider/snapshot_events_trigger.yaml
+    - provider/thin_events_trigger.yaml
 meta:
   version: 0.0.1
   arch:
