@@ -106,6 +106,7 @@ subscription_constructor:
 
 events:
   - events/snapshot_events/event.yaml
+  - events/thin_events/event.yaml
 
 extra:
   python:
