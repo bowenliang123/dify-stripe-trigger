@@ -18,5 +18,4 @@ class StripeThinEvents(Event):
         if not stripe_event:
             raise EventIgnoreError("stripe_event is empty")
 
-        request_json = request.get_json(silent=True) or {}
-        return Variables(variables={**request_json})
+        return Variables(variables={**stripe_event})
