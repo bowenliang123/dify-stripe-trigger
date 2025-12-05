@@ -25,7 +25,7 @@ class StripeTriggerTrigger(Trigger):
         payload: Mapping[str, Any] = self._validate_payload(request)
         response = Response(response='{"status": "ok"}', status=200, mimetype="application/json")
         events: list[str] = self._dispatch_trigger_events(payload=payload)
-        return EventDispatch(events=events, response=response)
+        return EventDispatch(events=events, response=response,payload=payload)
 
     def _dispatch_trigger_events(self, payload: Mapping[str, Any]) -> list[str]:
         """Dispatch events based on webhook payload."""
