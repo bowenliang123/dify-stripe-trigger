@@ -120,7 +120,7 @@ subscription_constructor:
 
 
 events:
-  - events/stripe_trigger_event.yaml
+  - events/event.yaml
 
 extra:
   python:

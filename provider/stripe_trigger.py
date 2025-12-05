@@ -17,7 +17,7 @@ from dify_plugin.errors.trigger import (
 )
 from dify_plugin.interfaces.trigger import Trigger, TriggerSubscriptionConstructor
 import stripe
-
+from stripe import Event as StripeEvent
 
 class StripeTriggerTrigger(Trigger):
     """
@@ -26,9 +26,9 @@ class StripeTriggerTrigger(Trigger):
 
     def _dispatch_event(self, subscription: Subscription, request: Request) -> EventDispatch:
         endpoint_secret = subscription.properties.get("endpoint_secret")
-        stripe_event: stripe.Event = self._parse_and_validate_payload(request, endpoint_secret)
+        stripe_event: StripeEvent = self._parse_and_validate_payload(request, endpoint_secret)
         payload: Mapping[str, Any] = {
-            "stripe_event": stripe_event
+            "stripe_event": stripe_event,
         }
         response = Response(response='{"status": "ok"}', status=200, mimetype="application/json")
 
@@ -36,7 +36,7 @@ class StripeTriggerTrigger(Trigger):
 
         return EventDispatch(events=events, response=response, payload=payload)
 
-    def _dispatch_trigger_events(self, stripe_event: stripe.Event) -> list[str]:
+    def _dispatch_trigger_events(self, stripe_event: StripeEvent) -> list[str]:
         """Dispatch events based on webhook payload."""
         # Get the event type from the payload
         event_type = stripe_event.type
@@ -60,7 +60,7 @@ class StripeTriggerTrigger(Trigger):
         payload = self._parse_payload(request)
         sig_header = request.headers.get('HTTP_STRIPE_SIGNATURE', "")
         try:
-            event: stripe.Event = stripe.Webhook.construct_event(
+            event: StripeEvent = stripe.Webhook.construct_event(
                 payload=payload, sig_header=sig_header, secret=endpoint_secret
                 # todo: optional api_key
             )
