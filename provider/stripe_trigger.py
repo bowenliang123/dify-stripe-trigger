@@ -1,3 +1,4 @@
+import logging
 import time
 from collections.abc import Mapping
 from typing import Any
@@ -15,30 +16,36 @@ from dify_plugin.errors.trigger import (
     UnsubscribeError,
 )
 from dify_plugin.interfaces.trigger import Trigger, TriggerSubscriptionConstructor
+import stripe
 
 
 class StripeTriggerTrigger(Trigger):
     """
     Handle the webhook event dispatch.
     """
+
     def _dispatch_event(self, subscription: Subscription, request: Request) -> EventDispatch:
-        payload: Mapping[str, Any] = self._validate_payload(request)
+        endpoint_secret = subscription.properties.get("endpoint_secret")
+        stripe_event: stripe.Event = self._parse_and_validate_payload(request, endpoint_secret)
+        payload: Mapping[str, Any] = {
+            "stripe_event": stripe_event
+        }
         response = Response(response='{"status": "ok"}', status=200, mimetype="application/json")
-        events: list[str] = self._dispatch_trigger_events(payload=payload)
-        return EventDispatch(events=events, response=response,payload=payload)
 
-    def _dispatch_trigger_events(self, payload: Mapping[str, Any]) -> list[str]:
+        events: list[str] = self._dispatch_trigger_events(stripe_event=stripe_event)
+
+        return EventDispatch(events=events, response=response, payload=payload)
+
+    def _dispatch_trigger_events(self, stripe_event: stripe.Event) -> list[str]:
         """Dispatch events based on webhook payload."""
-        events = []
         # Get the event type from the payload
-        event_type = payload.get("type", "")
+        event_type = stripe_event.type
+        event_type = event_type.replace(".", "_")
 
-        if event_type.startswith("my-event-type"):
-            events.append("stripe_trigger_event")
-
+        events = [event_type]
         return events
 
-    def _validate_payload(self, request: Request) -> Mapping[str, Any]:
+    def _parse_payload(self, request: Request) -> Mapping[str, Any]:
         try:
             payload = request.get_json(force=True)
             if not payload:
@@ -48,7 +55,25 @@ class StripeTriggerTrigger(Trigger):
             raise
         except Exception as exc:
             raise TriggerDispatchError(f"Failed to parse payload: {exc}") from exc
-        
+
+    def _parse_and_validate_payload(self, request: Request, endpoint_secret: str):
+        payload = self._parse_payload(request)
+        sig_header = request.headers.get('HTTP_STRIPE_SIGNATURE', "")
+        try:
+            event: stripe.Event = stripe.Webhook.construct_event(
+                payload=payload, sig_header=sig_header, secret=endpoint_secret
+                # todo: optional api_key
+            )
+            return event
+        except stripe.error.SignatureVerificationError as e:
+            logging.exception(e)
+            raise TriggerProviderOAuthError(
+                f"Failed to verify webhook signature,"
+                f" webhook secret len: {len(endpoint_secret)},",
+                f" signature header len: {len(sig_header)},",
+                f" exception: {str(e)}")
+
+
 class StripeTriggerSubscriptionConstructor(TriggerSubscriptionConstructor):
     """Manage stripe_trigger trigger subscriptions."""
 
@@ -58,13 +83,12 @@ class StripeTriggerSubscriptionConstructor(TriggerSubscriptionConstructor):
             raise TriggerProviderCredentialValidationError("API key is required to validate credentials.")
 
     def _create_subscription(
-        self,
-        endpoint: str,
-        parameters: Mapping[str, Any],
-        credentials: Mapping[str, Any],
-        credential_type: CredentialType,
+            self,
+            endpoint: str,
+            parameters: Mapping[str, Any],
+            credentials: Mapping[str, Any],
+            credential_type: CredentialType,
     ) -> Subscription:
-        
         events: list[str] = parameters.get("events", [])
 
         # Replace this placeholder with API calls to register a webhook
@@ -78,19 +102,19 @@ class StripeTriggerSubscriptionConstructor(TriggerSubscriptionConstructor):
         )
 
     def _delete_subscription(
-        self,
-        subscription: Subscription,
-        credentials: Mapping[str, Any],
-        credential_type: CredentialType,
+            self,
+            subscription: Subscription,
+            credentials: Mapping[str, Any],
+            credential_type: CredentialType,
     ) -> UnsubscribeResult:
         # Tear down any remote subscription that was created in `_subscribe`.
         return UnsubscribeResult(success=True, message="Subscription removed.")
 
     def _refresh_subscription(
-        self,
-        subscription: Subscription,
-        credentials: Mapping[str, Any],
-        credential_type: CredentialType,
+            self,
+            subscription: Subscription,
+            credentials: Mapping[str, Any],
+            credential_type: CredentialType,
     ) -> Subscription:
         # Extend the subscription lifetime or renew tokens with your upstream service.
         return Subscription(
