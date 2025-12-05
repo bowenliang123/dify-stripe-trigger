@@ -2,7 +2,7 @@ identity:
   name: "stripe_snapshot_events"
   author: "bowenliang123"
   label:
-    en_US: "Stripe (Snapshot) Event"
+    en_US: "Stripe Snapshot Events"
     zh_Hans: "Stripe 快照事件"
 
 description:
