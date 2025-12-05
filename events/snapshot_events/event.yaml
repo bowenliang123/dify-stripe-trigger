@@ -1,0 +1,65 @@
+identity:
+  name: "stripe_snapshot_events"
+  author: "bowenliang123"
+  label:
+    en_US: "Stripe (Snapshot) Event"
+    zh_Hans: "Stripe 快照事件"
+
+description:
+  en_US: "Stripe Snapshot Events, for the full list and payload structure of snapshot events, see https://docs.stripe.com/api/events/types"
+  zh_Hans: "Stripe 快照事件，完整的快照事件列表及事件结构，请参见 https://docs.stripe.com/api/events/types"
+
+output_schema:
+  type: object
+  properties:
+    id:
+      type: string
+      description: "Unique identifier for the object."
+    type:
+      type: string
+      description: "Description of the event (for example, invoice.created or charge.refunded)."
+    api_version:
+      type: string
+      description: "The Stripe API version used to render data when the event was created. The contents of data never change, so this value remains static regardless of the API version currently in use."
+    data:
+      type: object
+      description: "Object containing data associated with the event."
+      properties:
+        object:
+          type: object
+          description: "Object containing the API resource relevant to the event. For example, an invoice.created event will have a full invoice object as the value of the object key."
+        previous_attributes:
+          type: object
+          description: "Object containing the names of the updated attributes and their values prior to the event (only included in events of type *.updated). If an array attribute has any updated elements, this object contains the entire array. In Stripe API versions 2017-04-06 or earlier, an updated array attribute in this object includes only the updated array elements."
+    request:
+      type: object
+      description: "Information on the API request that triggers the event."
+      properties:
+        id:
+          type: string
+          description: "ID of the API request that caused the event. If null, the event was automatic (e.g., Stripe’s automatic subscription handling). Request logs are available in the dashboard, but currently not in the API."
+        idempotency_key:
+          type: string
+          description: "The idempotency key transmitted during the request, if any. Note: This property is populated only for events on or after May 23, 2017."
+    object:
+      type: string
+      description: "String representing the object’s type. Objects of the same type share the same value."
+    account:
+      type: string
+      description: "The connected account that originates the event."
+    context:
+      type: string
+      description: "Authentication context needed to fetch the event or related object."
+    created:
+      type: timestamp
+      description: "Time at which the object was created. Measured in seconds since the Unix epoch."
+    livemode:
+      type: boolean
+      description: "Has the value true if the object exists in live mode or the value false if the object exists in test mode."
+    pending_webhooks:
+      type: integer
+      description: "Number of webhooks that haven’t been successfully delivered (for example, to return a 20x response) to the URLs you specify."
+
+extra:
+  python:
+    source: events/snapshot_events/event.py

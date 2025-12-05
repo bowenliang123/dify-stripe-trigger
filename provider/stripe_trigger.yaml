@@ -11,19 +11,15 @@ identity:
 
 
 subscription_schema:
-  - name: "webhook_secret"
+  - name: "endpoint_secret"
     type: "secret-input"
     required: false
     label:
       en_US: "Webhook Secret"
       zh_Hans: "Webhook 密钥"
-      pt_BR: "Segredo do Webhook"
-      ja_JP: "Webhookシークレット"
     help:
       en_US: "Optional shared secret used to validate inbound webhook signatures."
       zh_Hans: "用于验证 Webhook 签名的可选共享密钥。"
-      pt_BR: "Segredo compartilhado opcional usado para validar assinaturas de webhook."
-      ja_JP: "受信Webhookの署名を検証するためのオプションの共有シークレットです。"
 
 subscription_constructor:
   parameters:
@@ -37,18 +33,12 @@ subscription_constructor:
         label:
           en_US: "StripeTrigger Event"
           zh_Hans: "stripe_trigger 事件"
-          pt_BR: "Evento StripeTrigger"
-          ja_JP: "stripe_trigger イベント"
     label:
       en_US: "Events to Subscribe"
       zh_Hans: "订阅的事件"
-      pt_BR: "Eventos para inscrever"
-      ja_JP: "購読するイベント"
     help:
       en_US: "Select which trigger events should be delivered to this subscription."
       zh_Hans: "选择哪些触发事件应该推送到这个订阅。"
-      pt_BR: "Selecione quais eventos de gatilho devem ser entregues para esta inscrição."
-      ja_JP: "このサブスクリプションに配信するトリガーイベントを選択します。"
 
   credentials_schema:
     api_key:
@@ -57,18 +47,13 @@ subscription_constructor:
       label:
         en_US: "API Key"
         zh_Hans: "API 密钥"
-        pt_BR: "Chave de API"
-        ja_JP: "APIキー"
       placeholder:
         en_US: "Paste your service API key"
         zh_Hans: "粘贴您的服务 API 密钥"
-        pt_BR: "Cole sua chave de API do serviço"
-        ja_JP: "サービスのAPIキーを貼り付けてください"
       help:
         en_US: "Used to authenticate requests to the third-party service."
         zh_Hans: "用于向第三方服务发起请求时进行身份验证。"
-        pt_BR: "Usado para autenticar solicitações ao serviço de terceiros."
-        ja_JP: "サードパーティサービスへのリクエストを認証するために使用します。"
+
 #########################################################################################
 # If you want to support OAuth, you can uncomment the following code.
 #########################################################################################
@@ -120,7 +105,7 @@ subscription_constructor:
 
 
 events:
-  - events/event.yaml
+  - events/snapshot_events/event.yaml
 
 extra:
   python:

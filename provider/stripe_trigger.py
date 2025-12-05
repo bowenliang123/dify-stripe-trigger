@@ -1,23 +1,21 @@
+import json
 import logging
 import time
 from collections.abc import Mapping
 from typing import Any
 
-from werkzeug import Request, Response
-
-from dify_plugin.entities.oauth import TriggerOAuthCredentials
+import stripe
 from dify_plugin.entities.provider_config import CredentialType
 from dify_plugin.entities.trigger import EventDispatch, Subscription, UnsubscribeResult
 from dify_plugin.errors.trigger import (
-    SubscriptionError,
     TriggerDispatchError,
     TriggerProviderCredentialValidationError,
-    TriggerProviderOAuthError,
-    UnsubscribeError,
+    TriggerValidationError,
 )
 from dify_plugin.interfaces.trigger import Trigger, TriggerSubscriptionConstructor
-import stripe
 from stripe import Event as StripeEvent
+from werkzeug import Request, Response
+
 
 class StripeTriggerTrigger(Trigger):
     """
@@ -30,19 +28,26 @@ class StripeTriggerTrigger(Trigger):
         payload: Mapping[str, Any] = {
             "stripe_event": stripe_event,
         }
-        response = Response(response='{"status": "ok"}', status=200, mimetype="application/json")
 
-        events: list[str] = self._dispatch_trigger_events(stripe_event=stripe_event)
+        event_names: list[str] = self._dispatch_trigger_events(stripe_event=stripe_event)
 
-        return EventDispatch(events=events, response=response, payload=payload)
+        response_object = {
+            "status": "ok",
+            "event_type": stripe_event.type,
+            "dispatched_event_names": event_names,
+        }
+        response = Response(response=json.dumps(response_object), status=200, mimetype="application/json")
+        return EventDispatch(events=event_names, response=response, payload=payload)
 
     def _dispatch_trigger_events(self, stripe_event: StripeEvent) -> list[str]:
         """Dispatch events based on webhook payload."""
-        # Get the event type from the payload
-        event_type = stripe_event.type
-        event_type = event_type.replace(".", "_")
+        # # Get the event type from the payload
+        # event_type = stripe_event.type
+        # event_type = event_type.replace(".", "_")
 
-        events = [event_type]
+        # todo: support thin events
+        events = ["stripe_snapshot_events"]
+
         return events
 
     def _parse_payload(self, request: Request) -> Mapping[str, Any]:
@@ -57,17 +62,16 @@ class StripeTriggerTrigger(Trigger):
             raise TriggerDispatchError(f"Failed to parse payload: {exc}") from exc
 
     def _parse_and_validate_payload(self, request: Request, endpoint_secret: str):
-        payload = self._parse_payload(request)
-        sig_header = request.headers.get('HTTP_STRIPE_SIGNATURE', "")
+        sig_header = request.headers.get('Stripe-Signature', "")
         try:
             event: StripeEvent = stripe.Webhook.construct_event(
-                payload=payload, sig_header=sig_header, secret=endpoint_secret
+                payload=request.data, sig_header=sig_header, secret=endpoint_secret
                 # todo: optional api_key
             )
             return event
         except stripe.error.SignatureVerificationError as e:
             logging.exception(e)
-            raise TriggerProviderOAuthError(
+            raise TriggerValidationError(
                 f"Failed to verify webhook signature,"
                 f" webhook secret len: {len(endpoint_secret)},",
                 f" signature header len: {len(sig_header)},",
