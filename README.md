@@ -11,12 +11,19 @@
 #### What This Plugin Does
 The Stripe Trigger plugin connects your Dify workflows with [Stripe Webhook events](https://docs.stripe.com/webhooks). When something happens in your Stripe workspace, like receiving an update for transaction, sessions and etc. , this trigger plugin automatically starts your Dify workflows to respond to these events.
 
-### Get Started
-
 ### Available Events
 
 Stripe webhook events: 
-- Snapshot events: https://docs.stripe.com/api/events
-- Thin events (V2): https://docs.stripe.com/api/v2/core/events
 
-
+- Snapshot events:    
+  - Strip docs for supported events and payload structure: https://docs.stripe.com/api/events
+  - The payload contains the full details of Strip events
+  - Parameters to provide:
+      - Singing secret for Webhooks
+  
+- Thin events (V2): 
+  - Strip docs for supported events and payload structure: https://docs.stripe.com/api/v2/core/events
+  - This plugins helps to parse the thin events to get the full event from Stripe API.
+  - Parameters to provide:
+    - Singing secret for Webhooks
+    - API key: commonly starts with "sk_" prefix
