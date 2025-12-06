@@ -9,18 +9,6 @@ identity:
     zh_Hans: "Stripe Webhook Trigger for Dify"
   icon: "icon.svg"
 
-
-subscription_schema:
-  - name: "endpoint_secret"
-    type: "secret-input"
-    required: false
-    label:
-      en_US: "Webhook Secret"
-      zh_Hans: "Webhook 密钥"
-    help:
-      en_US: "Optional shared secret used to validate inbound webhook signatures."
-      zh_Hans: "用于验证 Webhook 签名的可选共享密钥。"
-
 subscription_constructor:
   parameters:
   - name: "events"

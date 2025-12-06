@@ -9,6 +9,17 @@ description:
   en_US: "Stripe Snapshot Events, for the full list and payload structure of snapshot events, see https://docs.stripe.com/api/events/types"
   zh_Hans: "Stripe 快照事件，完整的快照事件列表及事件结构，请参见 https://docs.stripe.com/api/events/types"
 
+parameters:
+  - name: signing_secret
+    label:
+      en_US: Webhook Signing Secret
+      zh_Hans: Webhook 签名密钥
+    type: string
+    required: true
+    description:
+      en_US: "The signing secret issued by Stripe when webhooks configured for verifying incoming webhook signature"
+      zh_Hans: "配置Webhook时Stripe分配的签名密钥，用于验证传入的 Webhook 签名"
+
 output_schema:
   type: object
   properties:

@@ -9,6 +9,27 @@ description:
   en_US: "Stripe Thin Events, for the full list and payload structure of thin events, see https://docs.stripe.com/api/events/types"
   zh_Hans: "Stripe Thin事件，完整的快照事件列表及事件结构，请参见 https://docs.stripe.com/api/events/types"
 
+parameters:
+  - name: signing_secret
+    label:
+      en_US: Webhook Signing Secret
+      zh_Hans: Webhook 签名密钥
+    type: string
+    required: true
+    description:
+      en_US: "The signing secret issued by Stripe when webhooks configured for verifying incoming webhook signature"
+      zh_Hans: "配置Webhook时Stripe分配的签名密钥，用于验证传入的 Webhook 签名"
+
+  - name: api_key
+    label:
+      en_US: API Key
+      zh_Hans: API Key
+    type: string
+    required: true
+    description:
+      en_US: "Stripe API Key, usually starts with 'sk_', see https://docs.stripe.com/api/authentication"
+      zh_Hans: "Stripe API Key，通常以 'sk_' 开头，请参见 https://docs.stripe.com/api/authentication"
+
 output_schema:
   type: object
   properties:
