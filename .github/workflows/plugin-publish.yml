@@ -1,8 +1,10 @@
 name: Plugin Publish Workflow
 
 on:
-  release:
-    types: [published]
+#  release:
+#    types: [published]
+  push:
+    branches: [ main ]  # Trigger on push to main
 
 jobs:
   publish:
