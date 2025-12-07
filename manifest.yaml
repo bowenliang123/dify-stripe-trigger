@@ -3,11 +3,11 @@ type: plugin
 author: bowenliang123
 name: stripe_trigger
 label:
-  en_US: stripe_trigger
-  zh_Hans: stripe_trigger
+  en_US: Stripe Trigger
+  zh_Hans: Stripe 触发器
 description:
-  en_US: Stripe Webhook Trigger for Dify
-  zh_Hans: Stripe Webhook Trigger for Dify
+  en_US: Stripe trigger for Dify, supporting both snapshot events and thin events.
+  zh_Hans: 用于Dify的Stripe事件触发器，支持Snapshot事件和Thin事件。
 icon: icon.svg
 icon_dark: icon-dark.svg
 resource:
