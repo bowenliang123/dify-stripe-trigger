@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 from collections.abc import Mapping
 from datetime import datetime
@@ -19,7 +20,8 @@ class StripeTriggerTrigger(Trigger):
     """
 
     def _dispatch_event(self, subscription: Subscription, request: Request) -> EventDispatch:
-        # endpoint_secret = subscription.properties.get("endpoint_secret")
+        logging.info(f"Received 1 trigger event in stripe_trigger")
+
         request_json = request.get_json(silent=True) or {}
         event_type = request_json.get("type", "")
         if not event_type:
@@ -43,6 +45,8 @@ class StripeTriggerTrigger(Trigger):
             "timestamp": datetime.today().strftime('%Y-%m-%d %H:%M:%S')
         }
         response = Response(response=json.dumps(response_object), status=200, mimetype="application/json")
+
+        logging.info(f"Dispatched 1 trigger event in stripe_trigger")
         return EventDispatch(events=event_names, response=response, payload=payload)
 
     def _dispatch_trigger_events(self, is_thin_event: bool) -> list[str]:
