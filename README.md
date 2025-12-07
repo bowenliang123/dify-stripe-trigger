@@ -13,6 +13,8 @@ The Stripe Trigger plugin connects your Dify workflows with [Stripe Webhook even
 
 ### Available Events
 
+Both types of Stripe webhook events are supported: Snapshot events and Thin events.
+
 Stripe webhook events: 
 
 - Snapshot events:    
